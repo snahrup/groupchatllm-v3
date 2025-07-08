@@ -144,4 +144,8 @@ export type ModelInfoType = ReturnType<typeof getModelInfo>;
 export const getModelLogo = (modelKey: string) => {
   const info = getModelInfo(modelKey);
   return info.logo;
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> 2c0b36048df983f7ddc9b5347e47c846cf1dbed3

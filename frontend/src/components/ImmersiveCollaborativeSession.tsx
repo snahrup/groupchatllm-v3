@@ -53,6 +53,10 @@ export const ImmersiveCollaborativeSession: React.FC<ImmersiveCollaborativeSessi
     const models = ['gpt-4o', 'gpt-4', 'claude-3.5', 'claude-3', 'gemini-1.5', 'gemini-2.0'];
     const angleStep = (2 * Math.PI) / models.length;
     const radius = 250;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2c0b36048df983f7ddc9b5347e47c846cf1dbed3
     const nodes: Record<string, ModelNode> = {};
     models.forEach((model, index) => {
       const angle = index * angleStep - Math.PI / 2; // Start from top
@@ -96,6 +100,10 @@ export const ImmersiveCollaborativeSession: React.FC<ImmersiveCollaborativeSessi
       return updated;
     });
   }, [modelStates, messages]);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2c0b36048df983f7ddc9b5347e47c846cf1dbed3
   // Extract key accomplishments from conversation
   useEffect(() => {
     const newAccomplishments: AccomplishmentItem[] = [];
@@ -132,6 +140,10 @@ export const ImmersiveCollaborativeSession: React.FC<ImmersiveCollaborativeSessi
     
     setAccomplishments(newAccomplishments.slice(-5)); // Keep last 5
   }, [messages]);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2c0b36048df983f7ddc9b5347e47c846cf1dbed3
   const handleSendMessage = () => {
     if (userInput.trim() && isConnected) {
       sendMessage(userInput);
@@ -163,6 +175,10 @@ export const ImmersiveCollaborativeSession: React.FC<ImmersiveCollaborativeSessi
       }
     }
   };
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2c0b36048df983f7ddc9b5347e47c846cf1dbed3
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 overflow-hidden">
       {/* Animated background particles */}
@@ -203,6 +219,10 @@ export const ImmersiveCollaborativeSession: React.FC<ImmersiveCollaborativeSessi
             </div>
           </motion.div>
         </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2c0b36048df983f7ddc9b5347e47c846cf1dbed3
         {/* Model nodes */}
         {Object.values(modelNodes).map((node) => {
           const modelInfo = getModelInfo(node.id);
@@ -264,6 +284,10 @@ export const ImmersiveCollaborativeSession: React.FC<ImmersiveCollaborativeSessi
                     </motion.div>
                   )}
                 </AnimatePresence>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2c0b36048df983f7ddc9b5347e47c846cf1dbed3
                 {/* Message preview bubble */}
                 {node.messagePreview && (
                   <motion.div
@@ -313,6 +337,10 @@ export const ImmersiveCollaborativeSession: React.FC<ImmersiveCollaborativeSessi
             </motion.div>
           );
         })}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2c0b36048df983f7ddc9b5347e47c846cf1dbed3
         {/* Synapse connections */}
         <svg className="absolute inset-0 pointer-events-none" style={{ zIndex: 1 }}>
           {synapses.map((synapse, index) => {
@@ -348,6 +376,10 @@ export const ImmersiveCollaborativeSession: React.FC<ImmersiveCollaborativeSessi
           </defs>
         </svg>
       </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2c0b36048df983f7ddc9b5347e47c846cf1dbed3
       {/* Accomplishments Panel */}
       <motion.div
         className="absolute top-4 right-4 w-96 max-h-96 bg-white/10 backdrop-blur-md rounded-xl p-4 shadow-2xl"
@@ -401,6 +433,10 @@ export const ImmersiveCollaborativeSession: React.FC<ImmersiveCollaborativeSessi
           </div>
         </div>
       </motion.div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2c0b36048df983f7ddc9b5347e47c846cf1dbed3
       {/* Control Bar */}
       <motion.div
         className="absolute bottom-0 left-0 right-0 bg-black/30 backdrop-blur-xl border-t border-white/10"
