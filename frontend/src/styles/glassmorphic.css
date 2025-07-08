@@ -1,0 +1,261 @@
+/* GroupChatLLM v3 - Glassmorphic Design System */
+
+/* Global Bokeh Background Styles */
+.bokeh-background {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
+  z-index: 0;
+}
+
+.bokeh {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.6;
+  will-change: transform;
+}
+
+.bokeh-1 {
+  width: 300px;
+  height: 300px;
+  top: 10%;
+  left: 15%;
+  background: radial-gradient(circle, rgba(255, 100, 150, 0.4) 0%, rgba(255, 100, 150, 0.1) 70%, transparent 100%);
+}
+
+.bokeh-2 {
+  width: 250px;
+  height: 250px;
+  top: 40%;
+  right: 20%;
+  background: radial-gradient(circle, rgba(100, 255, 150, 0.4) 0%, rgba(100, 255, 150, 0.1) 70%, transparent 100%);
+}
+
+.bokeh-3 {
+  width: 400px;
+  height: 400px;
+  bottom: 20%;
+  left: 30%;
+  background: radial-gradient(circle, rgba(150, 150, 255, 0.3) 0%, rgba(150, 150, 255, 0.1) 70%, transparent 100%);
+}
+
+.bokeh-4 {
+  width: 200px;
+  height: 200px;
+  top: 20%;
+  right: 40%;
+  background: radial-gradient(circle, rgba(255, 255, 100, 0.4) 0%, rgba(255, 255, 100, 0.1) 70%, transparent 100%);
+}
+
+/* Glass Panel Styles */
+.glass-hero {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.glass-hero:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* Enhanced Input Styles */
+.glass-input {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.glass-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(99, 179, 237, 0.5);
+  box-shadow: 
+    0 0 0 3px rgba(99, 179, 237, 0.1),
+    0 4px 20px rgba(0, 0, 0, 0.2);
+  outline: none;
+}
+
+/* Button Styles */
+.glass-button {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+}
+
+.glass-button:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Animation Classes */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s ease-in-out infinite;
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+  .bokeh {
+    filter: blur(40px);
+  }
+  
+  .bokeh-1, .bokeh-3 {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .bokeh-2, .bokeh-4 {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .glass-hero {
+    padding: 1.5rem;
+  }
+  
+  .glass-card {
+    padding: 1rem;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .bokeh,
+  .animate-float,
+  .animate-pulse-slow,
+  .glass-card,
+  .glass-button {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+  .glass-hero {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  .glass-card {
+    background: rgba(255, 255, 255, 0.04);
+  }
+  
+  .glass-input {
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+/* Loading states */
+.loading-skeleton {
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.05) 25%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    rgba(255, 255, 255, 0.05) 75%
+  );
+  background-size: 200% 100%;
+  animation: loading 2s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Enhanced focus states for accessibility */
+.glass-button:focus-visible,
+.glass-input:focus-visible {
+  outline: 2px solid rgba(99, 179, 237, 0.8);
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .glass-hero,
+  .glass-card,
+  .glass-input,
+  .glass-button {
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+}
