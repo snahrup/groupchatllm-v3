@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useCollaborativeStream } from '../hooks/useCollaborativeStream';
 import { ModelState, StreamingMessage } from '../types';
 import { soundEffects } from '../utils/soundEffects';
+import { TypewriterMessageQueue } from './TypewriterComponents';
 
 interface EnhancedCollaborativeSessionProps {
   sessionId: string;
@@ -15,7 +16,6 @@ interface ConversationMessage {
   content: string;
   model?: string;
   timestamp: number;
-  isStreaming?: boolean;
 }
 
 export const EnhancedCollaborativeSession: React.FC<EnhancedCollaborativeSessionProps> = ({ 
@@ -23,9 +23,9 @@ export const EnhancedCollaborativeSession: React.FC<EnhancedCollaborativeSession
   onReturnToDashboard 
 }) => {
   const [userInput, setUserInput] = useState('');
-  const [conversationHistory, setConversationHistory] = useState<ConversationMessage[]>([]);
+  const [messageQueue, setMessageQueue] = useState<ConversationMessage[]>([]);
   const [isPaused, setIsPaused] = useState(false);
-  const [speed, setSpeed] = useState(1); // 0.5 = slow, 1 = normal, 2 = fast
+  const [speed, setSpeed] = useState<'slow' | 'normal' | 'fast'>('normal');
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [showModelDetails, setShowModelDetails] = useState(false);
   
@@ -102,42 +102,30 @@ export const EnhancedCollaborativeSession: React.FC<EnhancedCollaborativeSession
     };
   };
 
-  // Controlled message processing with pacing
+  // Queue-based message processing - add completed messages to queue
   useEffect(() => {
-    if (isPaused) return;
-
-    const processMessages = () => {
-      messages.forEach((message, model) => {
-        if (message.isComplete && message.content.trim()) {
-          const messageId = `${model}-${message.timestamp}`;
-          
-          setConversationHistory(prev => {
-            const exists = prev.some(msg => msg.id === messageId);
-            if (!exists) {
-              const newMessage: ConversationMessage = {
-                id: messageId,
-                type: 'ai',
-                content: message.content,
-                model: model,
-                timestamp: message.timestamp
-              };
-              
-              // Add with delay based on speed setting
-              setTimeout(() => {
-                setConversationHistory(current => [...current, newMessage]);
-                if (soundEnabled) soundEffects.modelCompleted();
-              }, (2000 / speed)); // Delay inversely proportional to speed
-              
-              return prev;
-            }
-            return prev;
-          });
-        }
-      });
-    };
-
-    processMessages();
-  }, [messages, isPaused, speed, soundEnabled]);
+    messages.forEach((message, model) => {
+      if (message.isComplete && message.content.trim()) {
+        const messageId = `${model}-${message.timestamp}`;
+        
+        setMessageQueue(prev => {
+          const exists = prev.some(msg => msg.id === messageId);
+          if (!exists) {
+            const newMessage: ConversationMessage = {
+              id: messageId,
+              type: 'ai',
+              content: message.content,
+              model: model,
+              timestamp: message.timestamp
+            };
+            
+            return [...prev, newMessage];
+          }
+          return prev;
+        });
+      }
+    });
+  }, [messages]);
 
   // Auto-scroll with smooth behavior
   useEffect(() => {
@@ -147,7 +135,7 @@ export const EnhancedCollaborativeSession: React.FC<EnhancedCollaborativeSession
         block: 'end'
       });
     }
-  }, [conversationHistory, isPaused]);
+  }, [messageQueue, isPaused]);
 
   // Sound effects control
   useEffect(() => {
@@ -164,7 +152,7 @@ export const EnhancedCollaborativeSession: React.FC<EnhancedCollaborativeSession
       timestamp: Date.now()
     };
     
-    setConversationHistory(prev => [...prev, userMessage]);
+    setMessageQueue(prev => [...prev, userMessage]);
     sendMessage(userInput);
     
     if (soundEnabled) soundEffects.messageSent();
@@ -175,7 +163,7 @@ export const EnhancedCollaborativeSession: React.FC<EnhancedCollaborativeSession
     setIsPaused(!isPaused);
   };
 
-  const handleSpeedChange = (newSpeed: number) => {
+  const handleSpeedChange = (newSpeed: 'slow' | 'normal' | 'fast') => {
     setSpeed(newSpeed);
   };
 
@@ -265,9 +253,9 @@ export const EnhancedCollaborativeSession: React.FC<EnhancedCollaborativeSession
             <div className="flex items-center gap-3">
               {/* Speed Control */}
               <div className="flex items-center gap-2">
-                <span className="text-white/70 text-sm">Speed:</span>
+                <span className="text-white/70 text-sm">Pace:</span>
                 <div className="flex gap-1">
-                  {[0.5, 1, 2].map((speedOption) => (
+                  {(['slow', 'normal', 'fast'] as const).map((speedOption) => (
                     <button
                       key={speedOption}
                       onClick={() => handleSpeedChange(speedOption)}
@@ -277,7 +265,9 @@ export const EnhancedCollaborativeSession: React.FC<EnhancedCollaborativeSession
                           : 'bg-white/10 text-white/60 hover:bg-white/15'
                       }`}
                     >
-                      {speedOption === 0.5 ? 'Slow' : speedOption === 1 ? 'Normal' : 'Fast'}
+                      {speedOption === 'slow' ? '🐌 Thoughtful' : 
+                       speedOption === 'normal' ? '📖 Reading' : 
+                       '⚡ Quick'}
                     </button>
                   ))}
                 </div>
@@ -329,91 +319,69 @@ export const EnhancedCollaborativeSession: React.FC<EnhancedCollaborativeSession
           {/* Left: Conversation Area */}
           <div className="flex-1 flex flex-col">
             
-            {/* Messages Area */}
+            {/* Messages Area with Typewriter Queue */}
             <div 
               ref={messagesContainerRef}
               className="flex-1 glass-card p-6 rounded-2xl mb-4 overflow-y-auto"
               style={{ maxHeight: 'calc(100vh - 300px)' }}
             >
-              <AnimatePresence>
-                {conversationHistory.map((message) => (
-                  <motion.div
-                    key={message.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.5 }}
-                    className={`mb-6 flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-                  >
-                    <div className={`max-w-[80%] p-4 rounded-2xl ${
-                      message.type === 'user' 
-                        ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-400/30' 
-                        : 'glass-card'
-                    }`}>
-                      {message.type === 'ai' && message.model && (
-                        <div className="flex items-center gap-3 mb-3">
-                          <div className={`w-10 h-10 rounded-xl bg-gradient-to-r ${getModelInfo(message.model).color} 
-                                         flex items-center justify-center text-lg`}>
-                            {getModelInfo(message.model).icon}
-                          </div>
-                          <div>
-                            <div className="font-semibold text-white">
-                              {getModelInfo(message.model).name}
-                            </div>
-                            <div className="text-xs text-white/60">
-                              {getModelInfo(message.model).expertise}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                      <div className="text-white leading-relaxed whitespace-pre-wrap">
-                        {message.content}
-                      </div>
-                      <div className="text-xs text-white/40 mt-2">
-                        {new Date(message.timestamp).toLocaleTimeString()}
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-
-              {/* Active Streaming Messages */}
-              <AnimatePresence>
-                {Array.from(messages.entries()).map(([model, message]) => (
-                  !message.isComplete && message.content.trim() ? (
+              {messageQueue.length === 0 ? (
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-center text-white/50">
+                    <div className="text-4xl mb-4">💬</div>
+                    <div className="text-lg">Ready for collaboration</div>
+                    <div className="text-sm mt-2">Ask your question to begin the discussion</div>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <TypewriterMessageQueue
+                    messages={messageQueue}
+                    speed={speed}
+                    isPaused={isPaused}
+                    getModelInfo={getModelInfo}
+                    onQueueComplete={() => {
+                      if (soundEnabled) soundEffects.allCompleted();
+                    }}
+                  />
+                  
+                  {/* Active Models Indicator */}
+                  {Array.from(messages.entries()).some(([_, message]) => !message.isComplete && message.content.trim()) && (
                     <motion.div
-                      key={`streaming-${model}`}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: isPaused ? 0.5 : 1 }}
-                      className="mb-6 flex justify-start"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-6 flex justify-center"
                     >
-                      <div className="max-w-[80%] glass-card p-4 rounded-2xl border border-blue-400/30">
-                        <div className="flex items-center gap-3 mb-3">
-                          <div className={`w-10 h-10 rounded-xl bg-gradient-to-r ${getModelInfo(model).color} 
-                                         flex items-center justify-center text-lg`}>
-                            {getModelInfo(model).icon}
+                      <div className="glass-card px-4 py-3 rounded-2xl border border-blue-400/20">
+                        <div className="flex items-center gap-3">
+                          <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                            className="w-4 h-4 border-2 border-blue-400/30 border-t-blue-400 rounded-full"
+                          />
+                          <div className="text-white/80 text-sm">
+                            AI experts are analyzing and preparing responses...
                           </div>
-                          <div>
-                            <div className="font-semibold text-white">
-                              {getModelInfo(model).name}
-                            </div>
-                            <div className="text-xs text-blue-300 flex items-center gap-1">
-                              <div className="animate-pulse">●</div>
-                              Thinking and responding...
-                            </div>
+                          <div className="flex gap-1">
+                            {Array.from(messages.entries())
+                              .filter(([_, message]) => !message.isComplete && message.content.trim())
+                              .map(([model, _]) => (
+                                <div
+                                  key={model}
+                                  className={`w-6 h-6 rounded-lg bg-gradient-to-r ${getModelInfo(model).color} 
+                                           flex items-center justify-center text-xs animate-pulse`}
+                                >
+                                  {getModelInfo(model).icon}
+                                </div>
+                              ))
+                            }
                           </div>
-                        </div>
-                        <div className="text-white leading-relaxed whitespace-pre-wrap">
-                          {message.content}
-                        </div>
-                        <div className="text-xs text-white/40 mt-2">
-                          {message.content.length} characters • Streaming...
                         </div>
                       </div>
                     </motion.div>
-                  ) : null
-                ))}
-              </AnimatePresence>
+                  )}
+                </>
+              )}
 
               <div ref={messagesEndRef} />
             </div>
