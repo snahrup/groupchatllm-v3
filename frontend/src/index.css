@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Base color system */
+  --base-hue: 220; /* Blue-based for GroupChatLLM */
+  --font-family: Inter, system-ui, sans-serif;
+  
+  /* Background system */
+  --bg-color: hsl(var(--base-hue) 15% 92%);
+  --bg-gradient: linear-gradient(135deg, 
+    hsl(var(--base-hue) 25% 95%) 0%,
+    hsl(var(--base-hue) 15% 88%) 50%,
+    hsl(var(--base-hue) 20% 90%) 100%);
+  
+  /* Text colors */
+  --text-primary: hsl(var(--base-hue) 40% 25%);
+  --text-secondary: hsl(var(--base-hue) 30% 45%);
+  --text-muted: hsl(var(--base-hue) 20% 65%);
+  
+  /* Glass card system */
+  --glass-bg: hsl(var(--base-hue) 25% 95% / 45%);
+  --glass-bg-strong: hsl(var(--base-hue) 25% 95% / 65%);
+  --glass-bg-subtle: hsl(var(--base-hue) 25% 95% / 25%);
+  
+  /* Glass effects */
+  --glass-blur: 1rem;
+  --glass-blur-subtle: 0.75rem;
+  --glass-border: 1px solid hsl(var(--base-hue) 75% 40% / 20%);
+  
+  /* Shadow system */
+  --glass-shadow: 
+    0 0 0.5rem 2px hsl(var(--base-hue) 25% 25% / 35%),
+    inset 0 0 0.1rem hsl(var(--base-hue) 75% 40% / 20%),
+    inset 0 0 0.2rem 0.1rem hsl(var(--base-hue) 75% 40% / 15%),
+    inset 0 0 0.3rem 0.2rem hsl(var(--base-hue) 75% 40% / 10%);
+  
+  --glass-shadow-subtle:
+    0 0 0.3rem 1px hsl(var(--base-hue) 25% 25% / 25%),
+    inset 0 0 0.05rem hsl(var(--base-hue) 75% 40% / 15%),
+    inset 0 0 0.1rem 0.05rem hsl(var(--base-hue) 75% 40% / 10%);
+    
+  /* Sizing */
+  --border-radius: 1.5rem;
+  --border-radius-small: 0.75rem;
+  --spacing-unit: 1.5rem;
+}
+
+body {
+  font-family: var(--font-family);
+  background: var(--bg-gradient);
+  min-height: 100vh;
+  color: var(--text-primary);
+}
+
+@layer components {
+  .glass-card-primary {
+    background-color: var(--glass-bg-strong);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: var(--glass-border);
+    border-radius: var(--border-radius);
+    box-shadow: var(--glass-shadow);
+    color: var(--text-primary);
+  }
+
+  .glass-card-secondary {
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur-subtle));
+    -webkit-backdrop-filter: blur(var(--glass-blur-subtle));
+    border: var(--glass-border);
+    border-radius: var(--border-radius);
+    box-shadow: var(--glass-shadow-subtle);
+    color: var(--text-secondary);
+  }
+
+  .glass-element {
+    background-color: var(--glass-bg-subtle);
+    backdrop-filter: blur(var(--glass-blur-subtle));
+    -webkit-backdrop-filter: blur(var(--glass-blur-subtle));
+    border: var(--glass-border);
+    border-radius: var(--border-radius-small);
+    box-shadow: var(--glass-shadow-subtle);
+    color: var(--text-primary);
+  }
+
+  .app-background {
+    background: var(--bg-gradient);
+    min-height: 100vh;
+    color: var(--text-primary);
+  }
+}
