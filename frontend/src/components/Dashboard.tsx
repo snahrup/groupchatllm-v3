@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiClient } from '../services/api';
 import { AvailableModel } from '../types';
+import { getModelInfo } from '../utils/modelInfo';
 
 interface DashboardProps {
   onSessionStart: (sessionId: string) => void;
@@ -167,10 +168,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ onSessionStart }) => {
                 <div className="flex flex-wrap gap-2 min-h-[60px] p-3 glass-element rounded-lg">
                   {selectedModels.map(modelId => {
                     const model = availableModels.find(m => m.id === modelId);
+                    const modelInfo = getModelInfo(modelId);
+                    const Logo = modelInfo.Logo;
                     return model ? (
                       <div key={modelId} className="flex items-center gap-2 px-3 py-1 bg-blue-100 rounded-full text-sm">
-                        <span>{model.icon}</span>
-                        <span>{model.role}</span>
+                        <Logo size={16} className={modelInfo.color} />
+                        <span>{modelInfo.brandName}</span>
                       </div>
                     ) : null;
                   })}
@@ -187,7 +190,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ onSessionStart }) => {
                   Available Experts
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {availableModels.map(model => (
+                  {availableModels.map(model => {
+                    const modelInfo = getModelInfo(model.id);
+                    const Logo = modelInfo.Logo;
+                    return (
                     <div
                       key={model.id}
                       onClick={() => handleModelToggle(model.id)}
@@ -198,17 +204,18 @@ export const Dashboard: React.FC<DashboardProps> = ({ onSessionStart }) => {
                       }`}
                     >
                       <div className="flex items-center gap-3 mb-2">
-                        <span className="text-2xl">{model.icon}</span>
+                        <Logo size={32} className={modelInfo.color} />
                         <div>
-                          <div className="font-medium">{model.role}</div>
-                          <div className="text-xs opacity-70">{model.model_name}</div>
+                          <div className="font-medium">{modelInfo.brandName}</div>
+                          <div className="text-xs opacity-70">{modelInfo.name}</div>
                         </div>
                       </div>
                       <div className="text-sm opacity-80 leading-relaxed">
-                        {model.collaboration_style}
+                        {modelInfo.expertise}
                       </div>
                     </div>
-                  ))}
+                  );
+                  })}
                 </div>
               </div>
             </div>

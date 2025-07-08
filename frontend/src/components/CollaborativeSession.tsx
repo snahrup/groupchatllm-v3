@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useCollaborativeStream } from '../hooks/useCollaborativeStream';
-import { ModelState, StreamingMessage } from '../types';
+import { ModelState } from '../types';
 import { DebugPanel } from './DebugPanel';
 import { SynapseAnimation } from './SynapseAnimation';
 import { ModelThinkingIndicator } from './ModelThinkingIndicator';
 import { soundEffects } from '../utils/soundEffects';
+import { getModelInfo, getModelBrandName, getModelColor } from '../utils/modelInfo';
 
 interface CollaborativeSessionProps {
   sessionId: string;
@@ -34,7 +35,6 @@ export const CollaborativeSession: React.FC<CollaborativeSessionProps> = ({
     isConnected,
     error,
     sendMessage,
-    disconnect,
     stats
   } = useCollaborativeStream(sessionId);
 
@@ -153,45 +153,6 @@ export const CollaborativeSession: React.FC<CollaborativeSessionProps> = ({
     // Note: We don't remove completed messages from the streaming map here
     // as they might be useful for display purposes during transition
   }, [messages]);
-  const getModelIcon = (model: string) => {
-    // Handle both UUID and friendly names
-    const modelIcons: Record<string, string> = {
-      'gpt-4o': '🧠',
-      'claude-3.5': '🎭', 
-      'gemini-1.5': '🔬',
-      'gpt-4': '🧠',
-      'claude-3': '🎭',
-      'gemini-2.0': '🔬',
-      'system': '⚙️'
-    };
-    
-    // If it's a UUID, try to map based on common patterns
-    if (model.length > 20) {
-      // This is likely a UUID, return a default icon
-      return '🤖';
-    }
-    
-    return modelIcons[model] || '🤖';
-  };
-
-  const getModelName = (model: string) => {
-    const modelNames: Record<string, string> = {
-      'gpt-4o': 'The Strategist',
-      'claude-3.5': 'The Creative', 
-      'gemini-1.5': 'The Analyst',
-      'gpt-4': 'The Architect',
-      'claude-3': 'The Synthesizer',
-      'gemini-2.0': 'The Explorer',
-      'system': 'System'
-    };
-    
-    // If it's a UUID, return a shortened version
-    if (model.length > 20) {
-      return `AI Model ${model.slice(0, 8)}...`;
-    }
-    
-    return modelNames[model] || model;
-  };
 
   const getStatusIcon = (state: ModelState) => {
     switch (state) {
@@ -265,7 +226,7 @@ export const CollaborativeSession: React.FC<CollaborativeSessionProps> = ({
               )}
               
               {/* Debug info */}
-              {process.env.NODE_ENV === 'development' && (
+              {import.meta.env.DEV && (
                 <div className="text-xs opacity-50 mb-2">
                   Debug: {conversationHistory.length} in history, {messages.size} streaming
                 </div>
@@ -286,8 +247,8 @@ export const CollaborativeSession: React.FC<CollaborativeSessionProps> = ({
                     }`}>
                       {msg.type === 'ai' && (
                         <div className="flex items-center gap-2 mb-2 text-sm opacity-80">
-                          <span>{getModelIcon(msg.model!)}</span>
-                          <span>{getModelName(msg.model!)}</span>
+                          {React.createElement(getModelInfo(msg.model!).Logo, { size: 20, className: getModelColor(msg.model!) })}
+                          <span>{getModelBrandName(msg.model!)}</span>
                           <span className="text-xs opacity-60">• Complete</span>
                         </div>
                       )}
@@ -308,8 +269,6 @@ export const CollaborativeSession: React.FC<CollaborativeSessionProps> = ({
                   key={`thinking-${model}`}
                   model={model}
                   state={state}
-                  getModelIcon={getModelIcon}
-                  getModelName={getModelName}
                 />
               ))}
               
@@ -330,8 +289,8 @@ export const CollaborativeSession: React.FC<CollaborativeSessionProps> = ({
                   >
                     <div className="max-w-[80%] p-4 glass-element rounded-lg border border-blue-300/30">
                       <div className="flex items-center gap-2 mb-2 text-sm opacity-80">
-                        <span>{getModelIcon(model)}</span>
-                        <span>{getModelName(model)}</span>
+                        {React.createElement(getModelInfo(model).Logo, { size: 20, className: getModelColor(model) })}
+                        <span>{getModelBrandName(model)}</span>
                         <span className="animate-pulse">✍️</span>
                       </div>
                       <div className="whitespace-pre-wrap">{message.content}</div>
@@ -421,13 +380,16 @@ export const CollaborativeSession: React.FC<CollaborativeSessionProps> = ({
             <h3 className="text-lg font-semibold mb-4">AI Panel Status</h3>
             
             <div className="space-y-4">
-              {Array.from(modelStates.entries()).map(([model, state]) => (
+              {Array.from(modelStates.entries()).map(([model, state]) => {
+                const modelInfo = getModelInfo(model);
+                const Logo = modelInfo.Logo;
+                return (
                 <div key={model} className="glass-element p-4 rounded-lg">
                   <div className="flex items-center gap-3 mb-2">
-                    <span className="text-xl">{getModelIcon(model)}</span>
+                    <Logo size={24} className={modelInfo.color} />
                     <div className="flex-1">
-                      <div className="font-medium">{getModelName(model)}</div>
-                      <div className="text-sm opacity-70">{model}</div>
+                      <div className="font-medium">{modelInfo.brandName}</div>
+                      <div className="text-sm opacity-70">{modelInfo.name}</div>
                     </div>
                     <span className="text-lg">{getStatusIcon(state)}</span>
                   </div>
@@ -447,7 +409,8 @@ export const CollaborativeSession: React.FC<CollaborativeSessionProps> = ({
                     </div>
                   )}
                 </div>
-              ))}
+              );
+              })}
             </div>
 
             {/* Synapse Count */}

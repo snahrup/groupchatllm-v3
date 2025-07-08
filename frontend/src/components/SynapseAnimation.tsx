@@ -3,7 +3,7 @@ import { SynapseConnection } from '../types';
 
 interface SynapseAnimationProps {
   synapses: SynapseConnection[];
-  containerRef: React.RefObject<HTMLElement>;
+  containerRef: React.RefObject<HTMLElement | null>;
 }
 
 export const SynapseAnimation: React.FC<SynapseAnimationProps> = ({ 
@@ -54,7 +54,7 @@ export const SynapseAnimation: React.FC<SynapseAnimationProps> = ({
 
 interface SynapseLineProps {
   synapse: SynapseConnection;
-  containerRef: React.RefObject<HTMLElement>;
+  containerRef: React.RefObject<HTMLElement | null>;
   index: number;
 }
 
@@ -91,7 +91,6 @@ const SynapseLine: React.FC<SynapseLineProps> = ({ synapse, containerRef, index 
   if (!coordinates) return null;
   
   const { x1, y1, x2, y2 } = coordinates;
-  const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   
   return (
     <svg

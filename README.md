@@ -27,20 +27,52 @@ GroupChatLLM v3 is a groundbreaking platform that enables multiple AI models to 
 
 ```
 groupchatllm-v3/
-├── backend/          # FastAPI backend with AI orchestration
-├── frontend/         # React TypeScript frontend
-├── .venv/           # Python virtual environment
-├── launch.bat       # Elegant production launcher
-└── shutdown.bat     # Graceful shutdown script
+├── backend/                    # FastAPI backend with AI orchestration
+│   ├── api/                   # REST + SSE endpoints
+│   ├── streaming/             # Concurrent AI streaming engine
+│   └── config/personas.yaml   # AI personality definitions
+├── frontend/                   # React TypeScript frontend
+│   ├── components/
+│   │   ├── CollaborativeSession.tsx      # Enhanced chat mode
+│   │   ├── ImmersiveCollaborativeSession.tsx  # Graph-based mode
+│   │   └── logos/ModelLogos.tsx          # Official AI logos
+│   └── styles/
+│       ├── glassmorphic.css   # Glass UI effects
+│       └── immersive.css      # Immersive mode styles
+├── context/                    # Project documentation
+├── .venv/                     # Python virtual environment
+├── launch.bat                 # Elegant production launcher
+└── shutdown.bat               # Graceful shutdown script
 ```
 
 ## 🎯 Features
 
+### Two Revolutionary UI Modes
+
+#### ✨ Enhanced Mode
+- **Traditional chat interface** with advanced visual enhancements
+- **Real-time synapse animations** showing AI collaboration
+- **Typewriter text effects** for natural conversation flow
+- **Sound feedback** for enhanced engagement
+- **Model thinking indicators** with bouncing animations
+- **Proper AI branding** with official logos (ChatGPT, Claude, Gemini)
+
+#### 🌐 Immersive Mode (NEW!)
+- **Graph-based visualization** with AI models arranged in a circle
+- **Interactive controls** - interrupt, elaborate, or redirect models while they type
+- **Live accomplishments panel** tracking key insights and contributors
+- **Floating node interface** showing each model's current state
+- **Message preview bubbles** with real-time content
+- **Particle effects background** for immersive experience
+- **Visual synapse connections** between collaborating models
+
+### Core Platform Features
 - **Concurrent AI Collaboration**: Multiple models respond simultaneously
-- **Synapse Detection**: Visualize when AIs build on each other's ideas
-- **SSE Streaming**: Real-time response streaming
+- **Instant Context Propagation**: <100ms memory updates across models
+- **SSE Streaming**: Real-time response streaming with visual feedback
 - **Glassmorphic UI**: Premium, futuristic interface design
 - **Multi-Provider Support**: OpenAI, Anthropic, Google integration
+- **Professional Branding**: Actual AI model logos replace generic icons
 
 ## 🛠️ Prerequisites
 

@@ -1,20 +1,20 @@
 import React from 'react';
 import { ModelState } from '../types';
+import { getModelInfo, getModelBrandName, getModelColor } from '../utils/modelInfo';
 
 interface ModelThinkingIndicatorProps {
   model: string;
   state: ModelState;
-  getModelIcon: (model: string) => string;
-  getModelName: (model: string) => string;
 }
 
 export const ModelThinkingIndicator: React.FC<ModelThinkingIndicatorProps> = ({
   model,
-  state,
-  getModelIcon,
-  getModelName
+  state
 }) => {
   if (state !== 'thinking') return null;
+  
+  const modelInfo = getModelInfo(model);
+  const Logo = modelInfo.Logo;
   
   return (
     <div 
@@ -23,10 +23,10 @@ export const ModelThinkingIndicator: React.FC<ModelThinkingIndicatorProps> = ({
     >
       <div className="max-w-[80%] p-4 glass-element rounded-lg border border-purple-300/30">
         <div className="flex items-center gap-3">
-          <span className="text-xl">{getModelIcon(model)}</span>
+          <Logo size={24} className={getModelColor(model)} />
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <span className="font-medium text-sm">{getModelName(model)}</span>
+              <span className="font-medium text-sm">{getModelBrandName(model)}</span>
               <span className="text-xs opacity-60">is thinking...</span>
             </div>
             <div className="flex gap-1">

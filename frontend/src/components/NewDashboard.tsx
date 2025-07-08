@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface NewDashboardProps {
-  onSessionCreate: (sessionId: string) => void;
+  onSessionCreate: (sessionId: string, mode?: 'enhanced' | 'immersive') => void;
 }
 
 interface PersonaRecommendation {
@@ -19,6 +19,7 @@ export const NewDashboard: React.FC<NewDashboardProps> = ({ onSessionCreate }) =
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [recommendations, setRecommendations] = useState<PersonaRecommendation[]>([]);
   const [showRecommendations, setShowRecommendations] = useState(false);
+  const [sessionMode, setSessionMode] = useState<'enhanced' | 'immersive'>('enhanced');
 
   // Smart persona recommendations based on user input
   const analyzeInput = (input: string) => {
@@ -120,7 +121,7 @@ export const NewDashboard: React.FC<NewDashboardProps> = ({ onSessionCreate }) =
       });
       
       const data = await response.json();
-      onSessionCreate(data.session_id);
+      onSessionCreate(data.session_id, sessionMode);
     } catch (error) {
       console.error('Failed to create session:', error);
     }
@@ -273,6 +274,47 @@ export const NewDashboard: React.FC<NewDashboardProps> = ({ onSessionCreate }) =
                 </motion.button>
               ))}
             </div>
+
+            {/* Session Mode Toggle */}
+            <div className="mt-6 flex justify-center">
+              <div className="flex items-center gap-4 px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">
+                <span className="text-white/80 text-sm">Session Mode:</span>
+                <button
+                  onClick={() => setSessionMode('enhanced')}
+                  className={`px-4 py-2 rounded-full text-sm transition-all ${
+                    sessionMode === 'enhanced'
+                      ? 'bg-white/20 text-white'
+                      : 'text-white/60 hover:text-white'
+                  }`}
+                >
+                  ✨ Enhanced
+                </button>
+                <button
+                  onClick={() => setSessionMode('immersive')}
+                  className={`px-4 py-2 rounded-full text-sm transition-all ${
+                    sessionMode === 'immersive'
+                      ? 'bg-white/20 text-white'
+                      : 'text-white/60 hover:text-white'
+                  }`}
+                >
+                  🌐 Immersive
+                </button>
+              </div>
+            </div>
+
+            {/* Mode Description */}
+            <motion.div 
+              key={sessionMode}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-3 text-center"
+            >
+              <p className="text-sm text-white/60">
+                {sessionMode === 'enhanced' 
+                  ? '✨ Traditional chat interface with visual enhancements and synapse animations'
+                  : '🌐 Immersive graph visualization where you can interrupt, redirect, and see real-time collaboration insights'}
+              </p>
+            </motion.div>
           </div>
         </motion.div>
 

@@ -27,13 +27,6 @@ export const useCollaborativeStream = (sessionId: string | null): UseCollaborati
   const [stats, setStats] = useState<CollaborationStats | null>(null);
   
   const eventSourceRef = useRef<EventSource | null>(null);
-  const messageIdCounter = useRef(0);
-
-  // Generate unique message ID
-  const generateMessageId = () => {
-    messageIdCounter.current += 1;
-    return `msg-${Date.now()}-${messageIdCounter.current}`;
-  };
 
   const disconnect = useCallback(() => {
     if (eventSourceRef.current) {
@@ -85,7 +78,7 @@ export const useCollaborativeStream = (sessionId: string | null): UseCollaborati
     };
 
     eventSource.addEventListener('connected', (event) => {
-      console.log('[SSE] Connected event:', event.data);
+      console.log('[SSE] Connected event:', (event as MessageEvent).data);
       setIsConnected(true);
       setError(null);
       
@@ -96,7 +89,7 @@ export const useCollaborativeStream = (sessionId: string | null): UseCollaborati
 
     eventSource.addEventListener('response', (event) => {
       try {
-        const data: ResponseData = JSON.parse(event.data);
+        const data: ResponseData = JSON.parse((event as MessageEvent).data);
         console.log('[SSE] Response event:', data);
         
         // Update streaming message
@@ -139,9 +132,9 @@ export const useCollaborativeStream = (sessionId: string | null): UseCollaborati
         });
         
         // Track synapses
-        if (data.synapse?.detected) {
+        if (data.synapse?.detected && data.synapse.building_on) {
           setSynapses(prev => [...prev, {
-            from: data.synapse.building_on,
+            from: data.synapse!.building_on,
             to: data.model,
             type: 'building',
             timestamp: Date.now()
@@ -154,7 +147,7 @@ export const useCollaborativeStream = (sessionId: string | null): UseCollaborati
 
     eventSource.addEventListener('model_complete', (event) => {
       try {
-        const data = JSON.parse(event.data);
+        const data = JSON.parse((event as MessageEvent).data);
         console.log('[SSE] Model complete:', data);
         setModelStates(prev => {
           const updated = new Map(prev);
@@ -168,7 +161,7 @@ export const useCollaborativeStream = (sessionId: string | null): UseCollaborati
 
     eventSource.addEventListener('all_complete', (event) => {
       try {
-        const data = JSON.parse(event.data);
+        const data = JSON.parse((event as MessageEvent).data);
         console.log('[SSE] All complete:', data);
         setStats(data.stats);
       } catch (error) {
@@ -178,7 +171,7 @@ export const useCollaborativeStream = (sessionId: string | null): UseCollaborati
 
     eventSource.addEventListener('error', (event) => {
       try {
-        const data = JSON.parse(event.data);
+        const data = JSON.parse((event as MessageEvent).data);
         console.error('[SSE] Error event:', data);
         setError(data.error || 'Stream error');
       } catch (error) {

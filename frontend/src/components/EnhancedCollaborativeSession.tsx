@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useCollaborativeStream } from '../hooks/useCollaborativeStream';
-import { ModelState, StreamingMessage } from '../types';
 import { soundEffects } from '../utils/soundEffects';
 import { TypewriterMessageQueue } from './TypewriterComponents';
+import { getModelInfo } from '../utils/modelInfo';
 
 interface EnhancedCollaborativeSessionProps {
   sessionId: string;
@@ -37,70 +37,9 @@ export const EnhancedCollaborativeSession: React.FC<EnhancedCollaborativeSession
     modelStates,
     synapses,
     isConnected,
-    error,
     sendMessage,
-    disconnect,
     stats
   } = useCollaborativeStream(sessionId);
-
-  // Enhanced model mapping
-  const getModelInfo = (model: string) => {
-    const modelMap: Record<string, { name: string; icon: string; expertise: string; color: string }> = {
-      'gpt-4o': { 
-        name: 'The Strategist', 
-        icon: '🎯', 
-        expertise: 'Strategic Planning & Analysis',
-        color: 'from-blue-500 to-blue-600'
-      },
-      'claude-3.5': { 
-        name: 'The Creative', 
-        icon: '🎨', 
-        expertise: 'Creative Innovation',
-        color: 'from-purple-500 to-pink-500'
-      },
-      'gemini-1.5': { 
-        name: 'The Analyst', 
-        icon: '🔬', 
-        expertise: 'Data Analysis & Research',
-        color: 'from-green-500 to-teal-500'
-      },
-      'gpt-4': { 
-        name: 'The Architect', 
-        icon: '🏗️', 
-        expertise: 'System Architecture',
-        color: 'from-indigo-500 to-blue-500'
-      },
-      'claude-3': { 
-        name: 'The Synthesizer', 
-        icon: '🔗', 
-        expertise: 'Idea Integration',
-        color: 'from-orange-500 to-red-500'
-      },
-      'gemini-2.0': { 
-        name: 'The Explorer', 
-        icon: '🚀', 
-        expertise: 'Innovation & Discovery',
-        color: 'from-cyan-500 to-blue-500'
-      }
-    };
-
-    // Handle UUIDs by using first part or falling back to default
-    const modelKey = Object.keys(modelMap).find(key => 
-      model.toLowerCase().includes(key) || key.includes(model.toLowerCase())
-    );
-    
-    if (modelKey) {
-      return modelMap[modelKey];
-    }
-    
-    // Fallback for UUIDs
-    return {
-      name: `AI Expert ${model.slice(0, 8)}`,
-      icon: '🤖',
-      expertise: 'Collaborative Intelligence',
-      color: 'from-gray-500 to-gray-600'
-    };
-  };
 
   // Queue-based message processing - add completed messages to queue
   useEffect(() => {
@@ -365,15 +304,19 @@ export const EnhancedCollaborativeSession: React.FC<EnhancedCollaborativeSession
                           <div className="flex gap-1">
                             {Array.from(messages.entries())
                               .filter(([_, message]) => !message.isComplete && message.content.trim())
-                              .map(([model, _]) => (
-                                <div
-                                  key={model}
-                                  className={`w-6 h-6 rounded-lg bg-gradient-to-r ${getModelInfo(model).color} 
-                                           flex items-center justify-center text-xs animate-pulse`}
-                                >
-                                  {getModelInfo(model).icon}
-                                </div>
-                              ))
+                              .map(([model, _]) => {
+                                const modelInfo = getModelInfo(model);
+                                const Logo = modelInfo.Logo;
+                                return (
+                                  <div
+                                    key={model}
+                                    className={`w-6 h-6 rounded-lg bg-gradient-to-r ${modelInfo.bgGradient} 
+                                             flex items-center justify-center animate-pulse`}
+                                  >
+                                    <Logo size={14} className="text-white" />
+                                  </div>
+                                );
+                              })
                             }
                           </div>
                         </div>
@@ -427,12 +370,13 @@ export const EnhancedCollaborativeSession: React.FC<EnhancedCollaborativeSession
               <div className="space-y-4">
                 {Array.from(modelStates.entries()).map(([model, state]) => {
                   const modelInfo = getModelInfo(model);
+                  const Logo = modelInfo.Logo;
                   return (
                     <div key={model} className="glass-card p-4 rounded-xl">
                       <div className="flex items-center gap-3 mb-2">
-                        <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${modelInfo.color} 
-                                       flex items-center justify-center text-sm`}>
-                          {modelInfo.icon}
+                        <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${modelInfo.bgGradient} 
+                                       flex items-center justify-center`}>
+                          <Logo size={20} className="text-white" />
                         </div>
                         <div className="flex-1">
                           <div className="font-medium text-white text-sm">

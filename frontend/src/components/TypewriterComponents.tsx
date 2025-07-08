@@ -79,7 +79,6 @@ export const TypewriterMessageQueue: React.FC<TypewriterMessageQueueProps> = ({
   onQueueComplete
 }) => {
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
-  const [displayedMessages, setDisplayedMessages] = useState<MessageQueueItem[]>([]);
 
   // Speed settings in characters per second
   const speedSettings = {
@@ -107,11 +106,11 @@ export const TypewriterMessageQueue: React.FC<TypewriterMessageQueueProps> = ({
 
   // Reset when messages change or when unpaused
   useEffect(() => {
-    if (messages.length > displayedMessages.length) {
+    if (messages.length > currentMessageIndex) {
       // New messages added, continue from where we left off
-      setCurrentMessageIndex(displayedMessages.length);
+      setCurrentMessageIndex(Math.max(0, currentMessageIndex));
     }
-  }, [messages, displayedMessages.length]);
+  }, [messages, currentMessageIndex]);
 
   // Handle pause/resume
   useEffect(() => {

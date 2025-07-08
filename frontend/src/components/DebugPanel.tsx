@@ -26,7 +26,7 @@ export function DebugPanel({ sessionId }: { sessionId: string }) {
         timestamp: new Date().toISOString()
       });
     } catch (error) {
-      setBackendStatus({ error: error.toString() });
+      setBackendStatus({ error: error instanceof Error ? error.message : String(error) });
     }
   };
   
